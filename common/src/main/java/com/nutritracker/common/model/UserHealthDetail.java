@@ -17,35 +17,38 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.nutritracker.common.annotation.StandardDecimal;
 
 /**
  * The persistent class for the USER_HEALTH_DETAILS database table.
  * 
  */
 @Entity
-@Table(name="USER_HEALTH_DETAILS")
+@Table(name = "USER_HEALTH_DETAILS")
 public class UserHealthDetail implements Serializable, Persistable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="HEALTH_DETAILS_ID_GENERATOR" )
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="HEALTH_DETAILS_ID_GENERATOR")
+	@SequenceGenerator(name = "HEALTH_DETAILS_ID_GENERATOR")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HEALTH_DETAILS_ID_GENERATOR")
 	private Long id;
 
-	@Column(name="BODY_FAT")
+	@Column(name = "BODY_FAT")
+	@StandardDecimal
 	private BigDecimal bodyFat;
 
-	@Column(name="BODYWEIGHT_KG")
+	@Column(name = "BODYWEIGHT_KG")
+	@StandardDecimal
 	private BigDecimal bodyweightKg;
 
-	@Column(name="RECORD_TIME")
+	@Column(name = "RECORD_TIME")
 	@DateTimeFormat(pattern = "dd/MM/yyy hh:mm:ss")
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
 	private LocalDate recordTime;
 
-	//bi-directional many-to-one association to Usrr
+	// bi-directional many-to-one association to Usrr
 	@ManyToOne
-	@JoinColumn(name="USERNAME")
+	@JoinColumn(name = "USERNAME")
 	private Usrr usrr;
 
 	public UserHealthDetail() {

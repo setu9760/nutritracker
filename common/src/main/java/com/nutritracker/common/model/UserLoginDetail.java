@@ -8,40 +8,41 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
-
 
 /**
  * The persistent class for the USER_LOGIN_DETAILS database table.
  * 
  */
 @Entity
-@Table(name="USER_LOGIN_DETAILS")
+@Table(name = "USER_LOGIN_DETAILS")
 public class UserLoginDetail implements Serializable, Persistable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@NotNull
 	private String username;
 
-	@Column(name="IS_LOCKED")
+	@Column(name = "IS_LOCKED")
 	private String isLocked;
 
-	@Column(name="LAST_LOGIN")
+	@Column(name = "LAST_LOGIN")
 	@DateTimeFormat(pattern = "dd/MM/yyy hh:mm:ss")
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
 	private LocalDate lastLogin;
 
 	private String password;
 
-	@Column(name="SIGN_ON_STATUS")
+	@Column(name = "SIGN_ON_STATUS")
 	private String signOnStatus;
 
-	//bi-directional one-to-one association to Usrr
+	// bi-directional one-to-one association to Usrr
 	@OneToOne
-	@JoinColumn(name="USERNAME")
+	@JoinColumn(name = "USERNAME")
 	private Usrr usrr;
 
 	public UserLoginDetail() {
@@ -51,7 +52,7 @@ public class UserLoginDetail implements Serializable, Persistable {
 	public String getId() {
 		return getUsername();
 	}
-	
+
 	public String getUsername() {
 		return this.username;
 	}
@@ -98,6 +99,58 @@ public class UserLoginDetail implements Serializable, Persistable {
 
 	public void setUsrr(Usrr usrr) {
 		this.usrr = usrr;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserLoginDetail [username=").append(username).append(", isLocked=").append(isLocked)
+				.append(", lastLogin=").append(lastLogin).append(", password=").append("[ENCRYPTED]")
+				.append(", signOnStatus=").append(signOnStatus).append(", usrr=").append(usrr).append("]");
+		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((isLocked == null) ? 0 : isLocked.hashCode());
+		result = prime * result + ((signOnStatus == null) ? 0 : signOnStatus.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((usrr == null) ? 0 : usrr.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserLoginDetail other = (UserLoginDetail) obj;
+		if (isLocked == null) {
+			if (other.isLocked != null)
+				return false;
+		} else if (!isLocked.equals(other.isLocked))
+			return false;
+		if (signOnStatus == null) {
+			if (other.signOnStatus != null)
+				return false;
+		} else if (!signOnStatus.equals(other.signOnStatus))
+			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		if (usrr == null) {
+			if (other.usrr != null)
+				return false;
+		} else if (!usrr.equals(other.usrr))
+			return false;
+		return true;
 	}
 
 }
