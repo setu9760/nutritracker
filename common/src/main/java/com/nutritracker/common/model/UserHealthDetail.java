@@ -94,4 +94,62 @@ public class UserHealthDetail implements Serializable, Persistable {
 		this.usrr = usrr;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserHealthDetail [id=").append(id).append(", bodyFat=").append(bodyFat)
+				.append(", bodyweightKg=").append(bodyweightKg).append(", recordTime=").append(recordTime)
+				.append(", usrr=").append(usrr).append("]");
+		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bodyFat == null) ? 0 : bodyFat.hashCode());
+		result = prime * result + ((bodyweightKg == null) ? 0 : bodyweightKg.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((recordTime == null) ? 0 : recordTime.hashCode());
+		result = prime * result + ((usrr == null) ? 0 : usrr.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserHealthDetail other = (UserHealthDetail) obj;
+		if (bodyFat == null) {
+			if (other.bodyFat != null)
+				return false;
+		} else if (!bodyFat.equals(other.bodyFat))
+			return false;
+		if (bodyweightKg == null) {
+			if (other.bodyweightKg != null)
+				return false;
+		} else if (!bodyweightKg.equals(other.bodyweightKg))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (recordTime == null) {
+			if (other.recordTime != null)
+				return false;
+		} else if (!recordTime.equals(other.recordTime))
+			return false;
+		if (usrr == null) {
+			if (other.usrr != null)
+				return false;
+		} else if (!usrr.equals(other.usrr))
+			return false;
+		return true;
+	}
+
 }
