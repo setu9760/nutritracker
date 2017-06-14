@@ -5,16 +5,19 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.nutritracker.common.annotation.StandardDecimal;
@@ -23,13 +26,16 @@ import com.nutritracker.common.annotation.StandardDecimal;
  * The persistent class for the USER_HEALTH_DETAILS database table.
  * 
  */
+@NamedQueries(value = {
+		@NamedQuery(name = "getDailyStatsForDate", query = "select uhd from UserHealthDetail uhd where to_char(uhd.recordTime, 'DD-MON-YY') = upper(:date)"),
+		@NamedQuery(name = "getStatsForMonth", query = "select uhd from UserHealthDetail uhd where recordTime >= to_char(upper(:fromDate)) and to_char(recordTime) < to_char(upper(:toDate))") })
 @Entity
 @Table(name = "USER_HEALTH_DETAILS")
 public class UserHealthDetail implements Serializable, Persistable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name = "HEALTH_DETAILS_ID_GENERATOR")
+	@SequenceGenerator(name = "HEALTH_DETAILS_ID_GENERATOR", sequenceName = "HEALTH_DETAILS_ID_GENERATOR", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HEALTH_DETAILS_ID_GENERATOR")
 	private Long id;
 
@@ -43,11 +49,11 @@ public class UserHealthDetail implements Serializable, Persistable {
 
 	@Column(name = "RECORD_TIME")
 	@DateTimeFormat(pattern = "dd/MM/yyy hh:mm:ss")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-	private LocalDate recordTime;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime recordTime = LocalDateTime.now();
 
 	// bi-directional many-to-one association to Usrr
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "USERNAME")
 	private Usrr usrr;
 
@@ -78,11 +84,11 @@ public class UserHealthDetail implements Serializable, Persistable {
 		this.bodyweightKg = bodyweightKg;
 	}
 
-	public LocalDate getRecordTime() {
+	public LocalDateTime getRecordTime() {
 		return this.recordTime;
 	}
 
-	public void setRecordTime(LocalDate recordTime) {
+	public void setRecordTime(LocalDateTime recordTime) {
 		this.recordTime = recordTime;
 	}
 
@@ -90,16 +96,15 @@ public class UserHealthDetail implements Serializable, Persistable {
 		return this.usrr;
 	}
 
-	public void setUsrr(Usrr usrr) {
+	void setUsrr(Usrr usrr) {
 		this.usrr = usrr;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("UserHealthDetail [id=").append(id).append(", bodyFat=").append(bodyFat)
-				.append(", bodyweightKg=").append(bodyweightKg).append(", recordTime=").append(recordTime)
-				.append(", usrr=").append(usrr).append("]");
+		builder.append("UserHealthDetail [id=").append(id).append(", bodyFat=").append(bodyFat).append(", bodyweightKg=").append(bodyweightKg).append(", recordTime=")
+				.append(recordTime).append(", usrr=").append(usrr.getUsername()).append("]");
 		return builder.toString();
 	}
 

@@ -2,6 +2,7 @@ package com.nutritracker.common.model;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -44,7 +45,7 @@ public class Usrr implements Serializable, Persistable {
 
 	// bi-directional many-to-one association to UserHealthDetail
 	@OneToMany(mappedBy = "usrr")
-	private Set<UserHealthDetail> userHealthDetails;
+	private Set<UserHealthDetail> userHealthDetails = new HashSet<UserHealthDetail>();
 
 	public Usrr() {
 	}
@@ -107,6 +108,8 @@ public class Usrr implements Serializable, Persistable {
 	}
 
 	public void setUserHealthDetails(Set<UserHealthDetail> userHealthDetails) {
+		if (this.userHealthDetails != null && !this.userHealthDetails.isEmpty())
+			this.userHealthDetails.addAll(userHealthDetails);
 		this.userHealthDetails = userHealthDetails;
 	}
 
@@ -128,7 +131,7 @@ public class Usrr implements Serializable, Persistable {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Usrr [username=").append(username).append(", country=").append(country).append(", dob=")
 				.append(dob).append(", email=").append(email).append(", timezone=").append(timezone).append(", image=")
-				.append(Arrays.toString(image)).append(", userHealthDetails=").append(userHealthDetails).append("]");
+				.append(Arrays.toString(image)).append("]");
 		return builder.toString();
 	}
 
@@ -141,7 +144,6 @@ public class Usrr implements Serializable, Persistable {
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + Arrays.hashCode(image);
 		result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
-		result = prime * result + ((userHealthDetails == null) ? 0 : userHealthDetails.hashCode());
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
@@ -177,11 +179,6 @@ public class Usrr implements Serializable, Persistable {
 				return false;
 		} else if (!timezone.equals(other.timezone))
 			return false;
-		if (userHealthDetails == null) {
-			if (other.userHealthDetails != null)
-				return false;
-		} else if (!userHealthDetails.equals(other.userHealthDetails))
-			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
@@ -189,4 +186,6 @@ public class Usrr implements Serializable, Persistable {
 			return false;
 		return true;
 	}
+
+
 }

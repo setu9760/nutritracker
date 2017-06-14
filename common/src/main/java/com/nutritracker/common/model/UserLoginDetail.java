@@ -3,7 +3,10 @@ package com.nutritracker.common.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -14,6 +17,9 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.nutritracker.common.model.enums.SignOnStatus;
+import com.nutritracker.common.utils.BooleanToStringConverter;
+
 /**
  * The persistent class for the USER_LOGIN_DETAILS database table.
  * 
@@ -23,12 +29,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class UserLoginDetail implements Serializable, Persistable {
 	private static final long serialVersionUID = 1L;
 
+	
 	@Id
+	@Column(name = "USERNAME")
 	@NotNull
 	private String username;
 
 	@Column(name = "IS_LOCKED")
-	private String isLocked;
+	@Convert(converter=BooleanToStringConverter.class)
+	private Boolean isLocked = false;
 
 	@Column(name = "LAST_LOGIN")
 	@DateTimeFormat(pattern = "dd/MM/yyy hh:mm:ss")
@@ -37,8 +46,9 @@ public class UserLoginDetail implements Serializable, Persistable {
 
 	private String password;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "SIGN_ON_STATUS")
-	private String signOnStatus;
+	private SignOnStatus signOnStatus;
 
 	// bi-directional one-to-one association to Usrr
 	@OneToOne
@@ -61,11 +71,11 @@ public class UserLoginDetail implements Serializable, Persistable {
 		this.username = username;
 	}
 
-	public String getIsLocked() {
+	public Boolean getIsLocked() {
 		return this.isLocked;
 	}
 
-	public void setIsLocked(String isLocked) {
+	public void setIsLocked(Boolean isLocked) {
 		this.isLocked = isLocked;
 	}
 
@@ -85,11 +95,11 @@ public class UserLoginDetail implements Serializable, Persistable {
 		this.password = password;
 	}
 
-	public String getSignOnStatus() {
+	public SignOnStatus getSignOnStatus() {
 		return this.signOnStatus;
 	}
 
-	public void setSignOnStatus(String signOnStatus) {
+	public void setSignOnStatus(SignOnStatus signOnStatus) {
 		this.signOnStatus = signOnStatus;
 	}
 
@@ -99,6 +109,7 @@ public class UserLoginDetail implements Serializable, Persistable {
 
 	public void setUsrr(Usrr usrr) {
 		this.usrr = usrr;
+		this.username = usrr.getUsername();
 	}
 
 	@Override

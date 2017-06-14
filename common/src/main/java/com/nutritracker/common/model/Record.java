@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,12 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.nutritracker.common.annotation.StandardDecimal;
+import com.nutritracker.common.model.enums.ServingUnit;
 
 /**
  * The persistent class for the "RECORD" database table.
@@ -29,7 +33,7 @@ public class Record implements Serializable, Persistable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name = "RECORD_ID_GENERATOR")
+	@SequenceGenerator(name = "RECORD_ID_GENERATOR", sequenceName = "RECORD_ID_GENERATOR", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RECORD_ID_GENERATOR")
 	private Long id;
 
@@ -41,19 +45,38 @@ public class Record implements Serializable, Persistable {
 	private BigDecimal servingSize;
 
 	@Column(name = "SERVING_UNIT")
-	private String servingUnit;
+	@Enumerated(EnumType.STRING)
+	private ServingUnit servingUnit;
 
 	@Column(name = "TIME")
 	@DateTimeFormat(pattern = "dd/MM/yyy hh:mm:ss")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-	private LocalDate time;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime time;
 
 	// bi-directional many-to-one association to Usrr
 	@ManyToOne
 	@JoinColumn(name = "USERNAME")
 	private Usrr usrr;
 
-	public Record() {
+	@Transient
+	private BigDecimal servingSizeGms;
+
+	Record() {
+		this(null, null, null, null);
+	}
+
+	public Record(Long fId, BigDecimal servingSize, ServingUnit servingUnit, Usrr usrr) {
+		this(fId, servingSize, servingUnit, LocalDateTime.now(), usrr);
+	}
+
+	public Record(Long fId, BigDecimal servingSize, ServingUnit servingUnit, LocalDateTime time, Usrr usrr) {
+		super();
+		this.fId = fId;
+		this.servingSize = servingSize;
+		this.servingUnit = servingUnit;
+		this.time = time;
+		this.usrr = usrr;
+		initializeServingsizeGms();
 	}
 
 	public Long getId() {
@@ -80,19 +103,19 @@ public class Record implements Serializable, Persistable {
 		this.servingSize = servingSize;
 	}
 
-	public String getServingUnit() {
+	public ServingUnit getServingUnit() {
 		return this.servingUnit;
 	}
 
-	public void setServingUnit(String servingUnit) {
+	public void setServingUnit(ServingUnit servingUnit) {
 		this.servingUnit = servingUnit;
 	}
 
-	public LocalDate getTime() {
+	public LocalDateTime getTime() {
 		return this.time;
 	}
 
-	public void setTime(LocalDate time) {
+	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
 
@@ -104,12 +127,37 @@ public class Record implements Serializable, Persistable {
 		this.usrr = usrr;
 	}
 
+	public BigDecimal getServingSizeGms() {
+		return servingSizeGms;
+	}
+
+	private void initializeServingsizeGms() {
+		if (servingUnit == null)
+			return;
+		switch (servingUnit) {
+		case Kg:
+			servingSizeGms = servingSize.multiply(new BigDecimal(1000));
+			break;
+		case Lb:
+			servingSizeGms = servingSize.multiply(new BigDecimal(453.592));
+			break;
+		case Oz:
+			servingSizeGms = servingSize.multiply(new BigDecimal(28.349));
+			break;
+		case Pint:
+			servingSizeGms = servingSize.multiply(new BigDecimal(568.261));
+			break;
+		default:
+			servingSizeGms = servingSize;
+			break;
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Record [id=").append(id).append(", fId=").append(fId).append(", servingSize=")
-				.append(servingSize).append(", servingUnit=").append(servingUnit).append(", time=").append(time)
-				.append(", usrr=").append(usrr).append("]");
+		builder.append("Record [id=").append(id).append(", fId=").append(fId).append(", servingSize=").append(servingSize).append(", servingUnit=").append(servingUnit)
+				.append(", time=").append(time).append(", usrr=").append(usrr).append("]");
 		return builder.toString();
 	}
 
