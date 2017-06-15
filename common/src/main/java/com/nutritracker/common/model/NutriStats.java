@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.nutritracker.common.annotation.StandardDecimal;
 
@@ -15,11 +13,6 @@ public class NutriStats implements Serializable, Persistable {
 
 	private static final long serialVersionUID = -7268301450573705617L;
 	private static final BigDecimal ZERO = new BigDecimal(0);
-
-	@Column(name = "SHORT_DESC")
-	@NotNull(message = "{invalid.description}")
-	@Size(max = 255, min = 3)
-	private String shortDesc;
 
 	@Column(name = "WATER_G")
 	@StandardDecimal
@@ -94,10 +87,9 @@ public class NutriStats implements Serializable, Persistable {
 		ironMg = ZERO;
 	}
 
-	public NutriStats(String shortDesc, BigDecimal waterG, BigDecimal calories, BigDecimal proteinG, BigDecimal sugarG, BigDecimal carbsG, BigDecimal fiberG, BigDecimal fatSatG,
+	public NutriStats(BigDecimal waterG, BigDecimal calories, BigDecimal proteinG, BigDecimal sugarG, BigDecimal carbsG, BigDecimal fiberG, BigDecimal fatSatG,
 			BigDecimal fatMonoG, BigDecimal fatPolyG, BigDecimal cholesterolMg, BigDecimal sodiumMg, BigDecimal potassiumMg, BigDecimal calciumMg, BigDecimal ironMg) {
 		super();
-		this.shortDesc = shortDesc;
 		this.waterG = waterG;
 		this.calories = calories;
 		this.proteinG = proteinG;
@@ -116,15 +108,7 @@ public class NutriStats implements Serializable, Persistable {
 
 	@Override
 	public Serializable getId() {
-		return getShortDesc();
-	}
-
-	public String getShortDesc() {
-		return shortDesc;
-	}
-
-	public void setShortDesc(String shortDesc) {
-		this.shortDesc = shortDesc;
+		return null;
 	}
 
 	public BigDecimal getWaterG() {
@@ -242,7 +226,7 @@ public class NutriStats implements Serializable, Persistable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("NutriStats [shortDesc=").append(shortDesc).append(", waterG=").append(waterG).append(", calories=").append(calories).append(", proteinG=").append(proteinG)
+		builder.append("NutriStats [waterG=").append(waterG).append(", calories=").append(calories).append(", proteinG=").append(proteinG)
 				.append(", sugarG=").append(sugarG).append(", carbsG=").append(carbsG).append(", fiberG=").append(fiberG).append(", fatSatG=").append(fatSatG)
 				.append(", fatMonoG=").append(fatMonoG).append(", fatPolyG=").append(fatPolyG).append(", cholesterolMg=").append(cholesterolMg).append(", sodiumMg=")
 				.append(sodiumMg).append(", potassiumMg=").append(potassiumMg).append(", calciumMg=").append(calciumMg).append(", ironMg=").append(ironMg).append("]");
@@ -264,7 +248,6 @@ public class NutriStats implements Serializable, Persistable {
 		result = prime * result + ((ironMg == null) ? 0 : ironMg.hashCode());
 		result = prime * result + ((potassiumMg == null) ? 0 : potassiumMg.hashCode());
 		result = prime * result + ((proteinG == null) ? 0 : proteinG.hashCode());
-		result = prime * result + ((shortDesc == null) ? 0 : shortDesc.hashCode());
 		result = prime * result + ((sodiumMg == null) ? 0 : sodiumMg.hashCode());
 		result = prime * result + ((sugarG == null) ? 0 : sugarG.hashCode());
 		result = prime * result + ((waterG == null) ? 0 : waterG.hashCode());
@@ -334,11 +317,6 @@ public class NutriStats implements Serializable, Persistable {
 			if (other.proteinG != null)
 				return false;
 		} else if (!proteinG.equals(other.proteinG))
-			return false;
-		if (shortDesc == null) {
-			if (other.shortDesc != null)
-				return false;
-		} else if (!shortDesc.equals(other.shortDesc))
 			return false;
 		if (sodiumMg == null) {
 			if (other.sodiumMg != null)

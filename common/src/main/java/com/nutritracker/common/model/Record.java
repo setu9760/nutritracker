@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
@@ -38,6 +39,7 @@ public class Record implements Serializable, Persistable {
 	private Long id;
 
 	@Column(name = "F_ID")
+	@NotNull
 	private Long fId;
 
 	@Column(name = "SERVING_SIZE")
@@ -91,40 +93,20 @@ public class Record implements Serializable, Persistable {
 		return this.fId;
 	}
 
-	public void setFId(Long fId) {
-		this.fId = fId;
-	}
-
 	public BigDecimal getServingSize() {
 		return this.servingSize;
-	}
-
-	public void setServingSize(BigDecimal servingSize) {
-		this.servingSize = servingSize;
 	}
 
 	public ServingUnit getServingUnit() {
 		return this.servingUnit;
 	}
 
-	public void setServingUnit(ServingUnit servingUnit) {
-		this.servingUnit = servingUnit;
-	}
-
 	public LocalDateTime getTime() {
 		return this.time;
 	}
 
-	public void setTime(LocalDateTime time) {
-		this.time = time;
-	}
-
 	public Usrr getUsrr() {
 		return this.usrr;
-	}
-
-	public void setUsrr(Usrr usrr) {
-		this.usrr = usrr;
 	}
 
 	public BigDecimal getServingSizeGms() {

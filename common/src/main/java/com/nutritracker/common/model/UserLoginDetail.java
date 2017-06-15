@@ -9,12 +9,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.nutritracker.common.model.enums.SignOnStatus;
@@ -24,25 +26,26 @@ import com.nutritracker.common.utils.BooleanToStringConverter;
  * The persistent class for the USER_LOGIN_DETAILS database table.
  * 
  */
+@NamedQueries(value = { @NamedQuery(name = "getLockedUsers", query = "select uld from UserLoginDetail uld where isLocked = 'Y'"),
+		@NamedQuery(name = "resetUser", query = "update UserLoginDetail set isLocked = 'N', signOnStatus = 'LOGGED_OUT' where username = :username") })
 @Entity
 @Table(name = "USER_LOGIN_DETAILS")
 public class UserLoginDetail implements Serializable, Persistable {
 	private static final long serialVersionUID = 1L;
 
-	
 	@Id
 	@Column(name = "USERNAME")
 	@NotNull
 	private String username;
 
 	@Column(name = "IS_LOCKED")
-	@Convert(converter=BooleanToStringConverter.class)
+	@Convert(converter = BooleanToStringConverter.class)
 	private Boolean isLocked = false;
 
 	@Column(name = "LAST_LOGIN")
 	@DateTimeFormat(pattern = "dd/MM/yyy hh:mm:ss")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-	private LocalDate lastLogin;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime lastLogin;
 
 	private String password;
 
@@ -53,9 +56,18 @@ public class UserLoginDetail implements Serializable, Persistable {
 	// bi-directional one-to-one association to Usrr
 	@OneToOne
 	@JoinColumn(name = "USERNAME")
+	@NotNull
 	private Usrr usrr;
 
-	public UserLoginDetail() {
+	UserLoginDetail() {
+	}
+
+	public UserLoginDetail(Usrr usrr, String password) {
+		super();
+		this.username = usrr.getUsername();
+		this.usrr = usrr;
+		this.signOnStatus = SignOnStatus.LOGGED_OUT;
+		this.password = password;
 	}
 
 	@Override
@@ -67,10 +79,6 @@ public class UserLoginDetail implements Serializable, Persistable {
 		return this.username;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public Boolean getIsLocked() {
 		return this.isLocked;
 	}
@@ -79,11 +87,11 @@ public class UserLoginDetail implements Serializable, Persistable {
 		this.isLocked = isLocked;
 	}
 
-	public LocalDate getLastLogin() {
+	public LocalDateTime getLastLogin() {
 		return this.lastLogin;
 	}
 
-	public void setLastLogin(LocalDate lastLogin) {
+	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
@@ -107,17 +115,11 @@ public class UserLoginDetail implements Serializable, Persistable {
 		return this.usrr;
 	}
 
-	public void setUsrr(Usrr usrr) {
-		this.usrr = usrr;
-		this.username = usrr.getUsername();
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("UserLoginDetail [username=").append(username).append(", isLocked=").append(isLocked)
-				.append(", lastLogin=").append(lastLogin).append(", password=").append("[ENCRYPTED]")
-				.append(", signOnStatus=").append(signOnStatus).append(", usrr=").append(usrr).append("]");
+		builder.append("UserLoginDetail [username=").append(username).append(", isLocked=").append(isLocked).append(", lastLogin=").append(lastLogin).append(", password=")
+				.append("<ENCRYPTED>").append(", signOnStatus=").append(signOnStatus).append(", usrr=").append(usrr).append("]");
 		return builder.toString();
 	}
 

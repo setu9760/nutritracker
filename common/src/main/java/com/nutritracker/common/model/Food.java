@@ -2,11 +2,14 @@ package com.nutritracker.common.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * The persistent class for the FOOD database table.
@@ -22,13 +25,19 @@ public class Food extends NutriStats {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FOOD_ID_GENERATOR")
 	private Long id;
 
+	@Column(name = "SHORT_DESC")
+	@NotNull(message = "{invalid.description}")
+	@Size(max = 255, min = 3)
+	private String shortDesc;
+	
 	Food() {
 		super();
 	}
 
 	public Food(String shortDesc, BigDecimal waterG, BigDecimal calories, BigDecimal proteinG, BigDecimal sugarG, BigDecimal carbsG, BigDecimal fiberG, BigDecimal fatSatG,
 			BigDecimal fatMonoG, BigDecimal fatPolyG, BigDecimal cholesterolMg, BigDecimal sodiumMg, BigDecimal potassiumMg, BigDecimal calciumMg, BigDecimal ironMg) {
-		super(shortDesc, waterG, calories, proteinG, sugarG, carbsG, fiberG, fatSatG, fatMonoG, fatPolyG, cholesterolMg, sodiumMg, potassiumMg, calciumMg, ironMg);
+		super(waterG, calories, proteinG, sugarG, carbsG, fiberG, fatSatG, fatMonoG, fatPolyG, cholesterolMg, sodiumMg, potassiumMg, calciumMg, ironMg);
+		this.shortDesc = shortDesc;
 	}
 
 	public Long getId() {
@@ -37,6 +46,14 @@ public class Food extends NutriStats {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getShortDesc() {
+		return shortDesc;
+	}
+
+	public void setShortDesc(String shortDesc) {
+		this.shortDesc = shortDesc;
 	}
 
 	@Override

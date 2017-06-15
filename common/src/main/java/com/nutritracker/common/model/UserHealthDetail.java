@@ -11,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -26,12 +24,10 @@ import com.nutritracker.common.annotation.StandardDecimal;
  * The persistent class for the USER_HEALTH_DETAILS database table.
  * 
  */
-@NamedQueries(value = {
-		@NamedQuery(name = "getDailyStatsForDate", query = "select uhd from UserHealthDetail uhd where to_char(uhd.recordTime, 'DD-MON-YY') = upper(:date)"),
-		@NamedQuery(name = "getStatsForMonth", query = "select uhd from UserHealthDetail uhd where recordTime >= to_char(upper(:fromDate)) and to_char(recordTime) < to_char(upper(:toDate))") })
 @Entity
 @Table(name = "USER_HEALTH_DETAILS")
 public class UserHealthDetail implements Serializable, Persistable {
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -53,11 +49,27 @@ public class UserHealthDetail implements Serializable, Persistable {
 	private LocalDateTime recordTime = LocalDateTime.now();
 
 	// bi-directional many-to-one association to Usrr
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USERNAME")
 	private Usrr usrr;
 
-	public UserHealthDetail() {
+	UserHealthDetail() {
+	}
+
+	public UserHealthDetail(BigDecimal bodyFat, BigDecimal bodyweightKg) {
+		this(bodyFat, bodyweightKg, LocalDateTime.now(), null);
+	}
+	
+	public UserHealthDetail(BigDecimal bodyFat, BigDecimal bodyweightKg, Usrr usrr) {
+		this(bodyFat, bodyweightKg, LocalDateTime.now(), usrr);
+	}
+
+	public UserHealthDetail(BigDecimal bodyFat, BigDecimal bodyweightKg, LocalDateTime recordTime, Usrr usrr) {
+		super();
+		this.bodyFat = bodyFat;
+		this.bodyweightKg = bodyweightKg;
+		this.recordTime = recordTime;
+		this.usrr = usrr;
 	}
 
 	public Long getId() {
@@ -72,16 +84,8 @@ public class UserHealthDetail implements Serializable, Persistable {
 		return this.bodyFat;
 	}
 
-	public void setBodyFat(BigDecimal bodyFat) {
-		this.bodyFat = bodyFat;
-	}
-
 	public BigDecimal getBodyweightKg() {
 		return this.bodyweightKg;
-	}
-
-	public void setBodyweightKg(BigDecimal bodyweightKg) {
-		this.bodyweightKg = bodyweightKg;
 	}
 
 	public LocalDateTime getRecordTime() {
@@ -95,7 +99,7 @@ public class UserHealthDetail implements Serializable, Persistable {
 	public Usrr getUsrr() {
 		return this.usrr;
 	}
-
+	
 	void setUsrr(Usrr usrr) {
 		this.usrr = usrr;
 	}

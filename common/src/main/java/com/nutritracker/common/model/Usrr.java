@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -25,9 +28,11 @@ public class Usrr implements Serializable, Persistable {
 
 	@Id
 	@NotNull
+	@Pattern(regexp = "[a-zA-Z0-9@$_.-]{3,16}")
 	private String username;
 
 	@NotNull
+	@Pattern(regexp = "[a-zA-Z0-9 ]{2,}")
 	private String country;
 
 	@DateTimeFormat(pattern = "dd/MM/yyy")
@@ -35,12 +40,14 @@ public class Usrr implements Serializable, Persistable {
 	private LocalDate dob;
 
 	@NotNull
+	@Pattern(regexp = "^[_.A-Za-z0-9-\\+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$")
 	private String email;
 
 	@NotNull
 	private String timezone;
 
 	@Lob
+	@Basic(fetch = FetchType.LAZY)
 	private byte[] image;
 
 	// bi-directional many-to-one association to UserHealthDetail
@@ -129,9 +136,8 @@ public class Usrr implements Serializable, Persistable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Usrr [username=").append(username).append(", country=").append(country).append(", dob=")
-				.append(dob).append(", email=").append(email).append(", timezone=").append(timezone).append(", image=")
-				.append(Arrays.toString(image)).append("]");
+		builder.append("Usrr [username=").append(username).append(", country=").append(country).append(", dob=").append(dob).append(", email=").append(email).append(", timezone=")
+				.append(timezone).append(", image=").append(Arrays.toString(image)).append("]");
 		return builder.toString();
 	}
 
@@ -186,6 +192,4 @@ public class Usrr implements Serializable, Persistable {
 			return false;
 		return true;
 	}
-
-
 }

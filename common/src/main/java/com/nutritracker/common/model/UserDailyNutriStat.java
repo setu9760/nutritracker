@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -20,6 +22,9 @@ import org.springframework.format.annotation.DateTimeFormat;
  * The persistent class for the USER_DAILY_NUTRI_STATS database table.
  * 
  */
+@NamedQueries(value = {
+		@NamedQuery(name = "getDailyStatsForDate", query = "select udns from UserDailyNutriStat udns where to_char(udns.date, 'DD-MON-YY') = upper(:date)"),
+		@NamedQuery(name = "getStatsForMonth", query = "select udns from UserDailyNutriStat udns where to_char(udns.date) >= to_char(upper(:fromDate)) and to_char(udns.date) < to_char(upper(:toDate))") })
 @Entity
 @Table(name = "USER_DAILY_NUTRI_STATS")
 public class UserDailyNutriStat extends NutriStats {
@@ -30,7 +35,7 @@ public class UserDailyNutriStat extends NutriStats {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DAILY_NUTRI_STATS_ID_GENERATOR")
 	private Long id;
 
-	@Column(name = "DATE")
+	@Column(name = "\"DATE\"")
 	@DateTimeFormat(pattern = "dd/MM/yyy")
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
 	private LocalDate date;
@@ -45,10 +50,16 @@ public class UserDailyNutriStat extends NutriStats {
 		this.date = LocalDate.now();
 	}
 
-	public UserDailyNutriStat(String shortDesc, BigDecimal waterG, BigDecimal calories, BigDecimal proteinG, BigDecimal sugarG, BigDecimal carbsG, BigDecimal fiberG,
-			BigDecimal fatSatG, BigDecimal fatMonoG, BigDecimal fatPolyG, BigDecimal cholesterolMg, BigDecimal sodiumMg, BigDecimal potassiumMg, BigDecimal calciumMg,
-			BigDecimal ironMg, LocalDate date, Usrr usrr) {
-		super(shortDesc, waterG, calories, proteinG, sugarG, carbsG, fiberG, fatSatG, fatMonoG, fatPolyG, cholesterolMg, sodiumMg, potassiumMg, calciumMg, ironMg);
+	public UserDailyNutriStat(LocalDate date, Usrr usrr) {
+		super();
+		this.date = date;
+		this.usrr = usrr;
+	}
+
+	public UserDailyNutriStat(BigDecimal waterG, BigDecimal calories, BigDecimal proteinG, BigDecimal sugarG, BigDecimal carbsG, BigDecimal fiberG, BigDecimal fatSatG,
+			BigDecimal fatMonoG, BigDecimal fatPolyG, BigDecimal cholesterolMg, BigDecimal sodiumMg, BigDecimal potassiumMg, BigDecimal calciumMg, BigDecimal ironMg,
+			LocalDate date, Usrr usrr) {
+		super(waterG, calories, proteinG, sugarG, carbsG, fiberG, fatSatG, fatMonoG, fatPolyG, cholesterolMg, sodiumMg, potassiumMg, calciumMg, ironMg);
 		this.date = date;
 		this.usrr = usrr;
 	}
@@ -65,15 +76,15 @@ public class UserDailyNutriStat extends NutriStats {
 		return this.date;
 	}
 
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-
 	public Usrr getUsrr() {
 		return this.usrr;
 	}
 
-	public void setUsrr(Usrr usrr) {
-		this.usrr = usrr;
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserDailyNutriStat [id=").append(id).append(", date=").append(date).append(", usrr=").append(usrr.getUsername()).append(", ").append(super.toString()).append("]");
+		return builder.toString();
 	}
+
 }

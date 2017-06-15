@@ -2,7 +2,6 @@ package com.desai.local.test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -18,11 +17,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import com.nutritracker.common.model.Food;
+import com.nutritracker.common.model.UserDailyNutriStat;
 import com.nutritracker.common.model.UserHealthDetail;
 import com.nutritracker.common.model.UserLoginDetail;
 import com.nutritracker.common.model.Usrr;
-import com.nutritracker.common.model.enums.SignOnStatus;
 
 public class Main {
 
@@ -37,45 +35,49 @@ public class Main {
 		EntityManager em = emf.createEntityManager();
 
 		Usrr u = new Usrr();
-		u.setUsername("TestUser");
-		u.setEmail("test@abc123.com");
+		u.setUsername("Taaaaaaaaaa");
+		u.setEmail("tes£t@abc123.com");
 		u.setCountry("GB");
 		u.setDob(new LocalDate(1991, 8, 25));
 		u.setTimezone(DateTimeZone.getDefault().toString());
 		
-		UserHealthDetail uhd = new UserHealthDetail();
-		uhd.setBodyFat(new BigDecimal(12.5));
-		uhd.setBodyweightKg(new BigDecimal(65));
-		u.addUserHealthDetail(uhd);
-		uhd.setRecordTime(LocalDateTime.now().minusDays(3));
+		u = em.find(Usrr.class, "TestUser");
+//		UserHealthDetail uhd = new UserHealthDetail(new BigDecimal(12.5), new BigDecimal(65), u);
+//		u.addUserHealthDetail(uhd);
+//		uhd.setRecordTime(LocalDateTime.now().minusDays(3));
 
-		UserLoginDetail uld = new UserLoginDetail();
-		uld.setUsrr(u);
-		uld.setSignOnStatus(SignOnStatus.LOGGED_OUT);
-		uld.setPassword("password");
-		uld.setIsLocked(false);
+		UserDailyNutriStat udns = new UserDailyNutriStat(LocalDate.now(), u);
+		UserDailyNutriStat udns2 = new UserDailyNutriStat(LocalDate.now().minusDays(4), u);
+		UserDailyNutriStat udns3 = new UserDailyNutriStat(LocalDate.now().minusDays(55), u);
+		
+		UserLoginDetail uld = new UserLoginDetail(u, "password");
 		
 		em.getTransaction().begin();
 //		em.merge(u);
+//		em.persist(udns);
+//		em.persist(udns2);
+//		em.persist(udns3);
 //		em.merge(uld);
 //		em.merge(uhd);
+//		em.createNamedQuery("resetUser").setParameter("username", u.getUsername()).executeUpdate();;
 		
 		em.getTransaction().commit();
 
 		System.out.println(LocalDate.now().minusDays(3).toString("dd-MMM-yy"));
 		
-		TypedQuery<UserHealthDetail> tq= em.createNamedQuery("getStatsForMonth", UserHealthDetail.class);
-		tq.setParameter("fromDate", LocalDate.now().minusDays(3).toString("dd-MMM-yy")).setParameter("toDate", LocalDate.now().minusDays(2).toString("dd-MMM-yy"));
+		TypedQuery<UserDailyNutriStat> tq= em.createNamedQuery("getStatsForMonth", UserDailyNutriStat.class);
+//		tq.setParameter("date", LocalDate.now().toString("dd-MMM-yy"));
+		tq.setParameter("fromDate", LocalDate.now().minusDays(5).toString("dd-MMM-yy")).setParameter("toDate", LocalDate.now().minusDays(1).toString("dd-MMM-yy"));
 		System.out.println(tq.getResultList());
-//		Food f = new Food();
-//		f.setShortDesc("AB");
-//		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-//		Set<ConstraintViolation<Food>> violations = validator.validate(f);
-//
-//		violations = validator.validate(f);
-//		for (ConstraintViolation<Food> constraintViolation : violations) {
-//			System.out.println(constraintViolation);
-//		}
+//		
+		
+		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+		Set<ConstraintViolation<Usrr>> violations = validator.validate(u);
+
+		violations = validator.validate(u);
+		for (ConstraintViolation<Usrr> constraintViolation : violations) {
+			System.out.println(constraintViolation);
+		}
 		
 		System.exit(-1);
 	}
