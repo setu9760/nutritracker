@@ -1,6 +1,6 @@
 package com.nutritracker.common.exceptions;
 
-public class RepositoryException extends Exception {
+public class RepositoryException extends RuntimeException {
 
 	private static final long serialVersionUID = 7092565078192557558L;
 
