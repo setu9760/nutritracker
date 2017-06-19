@@ -17,6 +17,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import com.nutritracker.common.model.Food;
 import com.nutritracker.common.model.UserDailyNutriStat;
 import com.nutritracker.common.model.UserHealthDetail;
 import com.nutritracker.common.model.UserLoginDetail;
@@ -25,6 +26,7 @@ import com.nutritracker.common.model.Usrr;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
+			
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 		ds.setUrl("jdbc:oracle:thin:@localhost:1521:nutritrcr");
@@ -65,9 +67,10 @@ public class Main {
 
 		System.out.println(LocalDate.now().minusDays(3).toString("dd-MMM-yy"));
 		
-		TypedQuery<UserDailyNutriStat> tq= em.createNamedQuery("getStatsForMonth", UserDailyNutriStat.class);
+		TypedQuery<Food> tq= em.createNamedQuery("findFoodWithCaloriesLessThan", Food.class);
 //		tq.setParameter("date", LocalDate.now().toString("dd-MMM-yy"));
-		tq.setParameter("fromDate", LocalDate.now().minusDays(5).toString("dd-MMM-yy")).setParameter("toDate", LocalDate.now().minusDays(1).toString("dd-MMM-yy"));
+//		tq.setParameter("fromDate", LocalDate.now().minusDays(5).toString("dd-MMM-yy")).setParameter("toDate", LocalDate.now().minusDays(1).toString("dd-MMM-yy"));
+		tq.setParameter("calories", new BigDecimal(10));
 		System.out.println(tq.getResultList());
 //		
 		

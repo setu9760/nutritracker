@@ -226,10 +226,10 @@ public class NutriStats implements Serializable, Persistable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("NutriStats [waterG=").append(waterG).append(", calories=").append(calories).append(", proteinG=").append(proteinG)
-				.append(", sugarG=").append(sugarG).append(", carbsG=").append(carbsG).append(", fiberG=").append(fiberG).append(", fatSatG=").append(fatSatG)
-				.append(", fatMonoG=").append(fatMonoG).append(", fatPolyG=").append(fatPolyG).append(", cholesterolMg=").append(cholesterolMg).append(", sodiumMg=")
-				.append(sodiumMg).append(", potassiumMg=").append(potassiumMg).append(", calciumMg=").append(calciumMg).append(", ironMg=").append(ironMg).append("]");
+		builder.append("NutriStats [waterG=").append(waterG).append(", calories=").append(calories).append(", proteinG=").append(proteinG).append(", sugarG=").append(sugarG)
+				.append(", carbsG=").append(carbsG).append(", fiberG=").append(fiberG).append(", fatSatG=").append(fatSatG).append(", fatMonoG=").append(fatMonoG)
+				.append(", fatPolyG=").append(fatPolyG).append(", cholesterolMg=").append(cholesterolMg).append(", sodiumMg=").append(sodiumMg).append(", potassiumMg=")
+				.append(potassiumMg).append(", calciumMg=").append(calciumMg).append(", ironMg=").append(ironMg).append("]");
 		return builder.toString();
 	}
 

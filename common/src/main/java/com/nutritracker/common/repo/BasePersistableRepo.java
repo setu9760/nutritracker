@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.nutritracker.common.exceptions.RepositoryException;
 import com.nutritracker.common.model.Persistable;
 
-public interface BasePersistableRepo<T extends Persistable> {
+public interface BasePersistableRepo<T extends Persistable> extends Serializable {
 
 	public void save(T t) throws RepositoryException;
 	
